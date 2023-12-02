@@ -5,7 +5,7 @@ ENTRYPOINT ["top", "-b"]
 
 FROM python:3.11
 
-WORKDIR /app
+WORKDIR /src
 
 COPY requirements.txt .
 
