@@ -1,7 +1,9 @@
 version: '3'
 
+name: countlet_bot_app
+
 services:
-  python-app:
+  discord_bot:
     build: .
     depends_on:
       - postgres
