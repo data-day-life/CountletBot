@@ -19,13 +19,13 @@ from aiohttp import ClientSession
 
 class CustomBot(commands.Bot):
     def __init__(
-        self,
-        *args,
-        initial_extensions: List[str],
-        db_pool: asyncpg.Pool,
-        web_client: ClientSession,
-        testing_guild_id: Optional[int] = None,
-        **kwargs,
+            self,
+            *args,
+            initial_extensions: List[str],
+            db_pool: asyncpg.Pool,
+            web_client: ClientSession,
+            testing_guild_id: Optional[int] = None,
+            **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.db_pool = db_pool
@@ -34,9 +34,8 @@ class CustomBot(commands.Bot):
         self.initial_extensions = initial_extensions
 
     async def setup_hook(self) -> None:
-
-        # here, we are loading extensions prior to sync to ensure we are syncing interactions defined in those extensions.
-
+        # Here, we are loading extensions prior to sync.
+        # This ensures we are syncing interactions defined in those extensions.
         for extension in self.initial_extensions:
             await self.load_extension(extension)
 
@@ -51,14 +50,24 @@ class CustomBot(commands.Bot):
             # followed by syncing to the testing guild.
             await self.tree.sync(guild=guild)
 
+
+
+
+
         # This would also be a good place to connect to our database and
         # load anything that should be in memory prior to handling events.
 
+            # Create database connection now that client is connected
 
-async def main():
+            # Update database with any changes in message history.
 
-    # When taking over how the bot process is run, you become responsible for a few additional things.
 
+
+
+
+
+
+def setup_logging():
     # 1. logging
 
     # for this example, we're going to set up a rotating file logger.
@@ -78,29 +87,27 @@ async def main():
     formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', dt_fmt, style='{')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
+    return logger
 
-    # Alternatively, you could use:
-    # discord.utils.setup_logging(handler=handler, root=False)
 
-    # One of the reasons to take over more of the process though
-    # is to ensure use with other libraries or tools which also require their own cleanup.
+async def main():
+    # When taking over how the bot process is run, you become responsible for a few additional things.
+    logger = setup_logging()
 
     # Here we have a web client and a database pool, both of which do cleanup at exit.
     # We also have our bot, which depends on both of these.
-
-    async with ClientSession() as our_client, asyncpg.create_pool(user='postgres', command_timeout=30) as pool:
+    async with (ClientSession() as our_client,
+                asyncpg.create_pool(user='postgres', command_timeout=30) as pool):
         # 2. We become responsible for starting the bot.
-
         exts = ['general', 'mod', 'dice']
         intents = discord.Intents.default()
         intents.message_content = True
-        async with CustomBot(
-            commands.when_mentioned,
-            db_pool=pool,
-            web_client=our_client,
-            initial_extensions=exts,
-            intents=intents,
-        ) as bot:
+        async with CustomBot(commands.when_mentioned,
+                             db_pool=pool,
+                             web_client=our_client,
+                             initial_extensions=exts,
+                             intents=intents,
+                             ) as bot:
             await bot.start('token')
 
 
