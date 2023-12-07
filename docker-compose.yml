@@ -8,7 +8,11 @@ services:
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: postgres://$DB_USER:$DB_PASSWORD@postgres:5432/your_database_name
+      CLIENT_TOKEN: $CLIENT_TOKEN
+      GUILD_ID: 780312283233779713
+      COUNT_CHAN_ID: 1038808890466390066
+      SEARCH_AFTER_MSG_ID: 1053012296370229248
+      DATABASE_URL: postgres://$DB_USER:$DB_PASSWORD@postgres:5432/countlet_bot
     networks:
       - app-network
 
@@ -17,7 +21,7 @@ services:
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: your_database_name
+      POSTGRES_DB: countlet_bot
     ports:
       - "5432:5432"
     networks:
