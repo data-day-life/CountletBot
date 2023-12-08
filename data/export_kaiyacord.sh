@@ -3,7 +3,7 @@
 
 TOKEN=MjIxMTE3ODAyMjY4ODUyMjI2.GP76oq.Q1jAzGC-3OfJ-0sr-brEFHqNz3aB8FN3i65stA
 CHANNELID=1038808890466390066
-# DLLFOLDER=/run/media/data_day_life/Vault/Coding_Projects/CountletBot/src/data_cold_start/DiscordChatExporter.Cli
+# DLLFOLDER=/run/media/data_day_life/Vault/Coding_Projects/CountletBot/src/data/DiscordChatExporter.Cli
 FILENAME='Kaiyacord - the-quest-to-10k'
 EXPORTDIRECTORY=/run/media/data_day_life/Vault/Coding_Projects/CountletBot/src/data_cold_start
 EXPORTFORMAT=json
