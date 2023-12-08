@@ -1,4 +1,4 @@
 .idea/**
 /src/config.py
 /Pipfile.lock
-/data/DiscordChatExporter.Cli/
+/data/
