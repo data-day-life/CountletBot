@@ -1,7 +1,4 @@
-from commands import bot_commands
-
 # This example requires the 'message_content' privileged intent to function, however your own bot might not.
-
 # This example covers advanced startup options and uses some real world examples for why you may need them.
 
 import asyncio
@@ -25,12 +22,14 @@ class CustomBot(commands.Bot):
             # db_pool: asyncpg.Pool,
             web_client: ClientSession,
             testing_guild_id: Optional[int] = None,
+            testing_chan_id: Optional[int] = None,
             **kwargs,
     ):
         super().__init__(*args, **kwargs)
         # self.db_pool = db_pool
         self.web_client = web_client
         self.testing_guild_id = testing_guild_id
+        self.testing_chan_id = testing_chan_id
         self.initial_extensions = initial_extensions
 
     async def setup_hook(self) -> None:
