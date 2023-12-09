@@ -10,3 +10,20 @@
 [2023-12-04 03:43:07] [INFO    ] discord.client: logging in using static token
 [2023-12-04 03:43:40] [WARNING ] discord.client: PyNaCl is not installed, voice will NOT be supported
 [2023-12-04 03:43:40] [INFO    ] discord.client: logging in using static token
+[2023-12-08 12:23:13] [WARNING ] discord.client: PyNaCl is not installed, voice will NOT be supported
+[2023-12-08 12:23:13] [INFO    ] discord.client: logging in using static token
+[2023-12-08 12:23:14] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: bef452c68ad8d61accc6eb19558cc8f3).
+[2023-12-08 12:25:03] [WARNING ] discord.client: PyNaCl is not installed, voice will NOT be supported
+[2023-12-08 12:25:03] [INFO    ] discord.client: logging in using static token
+[2023-12-08 12:25:04] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: c307ab0955ec4d16a008bd12e294bb9f).
+[2023-12-08 12:25:42] [WARNING ] discord.client: PyNaCl is not installed, voice will NOT be supported
+[2023-12-08 12:25:42] [INFO    ] discord.client: logging in using static token
+[2023-12-08 12:25:43] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 4b92b48b6a0f4a129c9b15d824496a13).
+[2023-12-08 12:26:33] [WARNING ] discord.client: PyNaCl is not installed, voice will NOT be supported
+[2023-12-08 12:26:41] [INFO    ] discord.client: logging in using static token
+[2023-12-08 18:09:26] [WARNING ] discord.client: PyNaCl is not installed, voice will NOT be supported
+[2023-12-08 18:09:26] [INFO    ] discord.client: logging in using static token
+[2023-12-08 18:09:28] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 356847c157d65dec9c678085e8650733).
+[2023-12-08 18:09:57] [WARNING ] discord.client: PyNaCl is not installed, voice will NOT be supported
+[2023-12-08 18:09:57] [INFO    ] discord.client: logging in using static token
+[2023-12-08 18:09:58] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: bc4ea50386f66ffad1b7ee8c103c5744).
