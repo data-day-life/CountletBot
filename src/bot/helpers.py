@@ -3,7 +3,7 @@ import json
 import pickle
 import time
 from datetime import timedelta
-from typing import List, Any
+from typing import Any
 import src.config as cfg
 
 
@@ -38,7 +38,7 @@ def get_msg_datetime(count_channel, msg_id):
     return msg_dt
 
 
-def parse_channel_message(msg, **kwargs):
+def parse_channel_message(msg):
     message = {'msg_id': int(msg.id),
                'auth_id': int(msg.author.id),
                'content': str(msg.content),
@@ -57,8 +57,10 @@ def parse_channel_messages(channel_msgs, **kwargs):
     :param channel_msgs: one or more channel messages from a channel to be formatted
     :return: a formatted collection of parsed channel messages.
     """
-    # <Message id=1053023864046751774 channel=<TextChannel id=1038808890466390066 name='the-quest-to-10k' position=2 nsfw=False news=False category_id=780312283746009128> type=<MessageType.default: 0> author=<User id=82982763317166080 name='ahi' global_name='Ahi' bot=False> flags=<MessageFlags value=0>>
-    verbose = kwargs.get('verbose')
+    # <Message id=1053023864046751774 channel=<TextChannel id=1038808890466390066 name='the-quest-to-10k' position=2
+    # nsfw=False news=False category_id=780312283746009128> type=<MessageType.default: 0> author=<User
+    # id=82982763317166080 name='ahi' global_name='Ahi' bot=False> flags=<MessageFlags value=0>>
+    kwargs.get('verbose')
 
     all_messages = []
     server_channels: list[Any] = []
@@ -71,7 +73,7 @@ def parse_channel_messages(channel_msgs, **kwargs):
                           'updated_at': ''
                           }
         server_channels.extend([server_channel] if server_channel not in server_channels else [])
-        message = parse_channel_message(msg, **kwargs)
+        message = parse_channel_message(msg)
 
         all_messages.append(message)
     return {'messages': all_messages, 'servers': server_channels}
@@ -114,7 +116,7 @@ def write_pickle_results(some_results, filename, folder='data/', **kwargs):
 
 
 def load_pickle_results(filename, folder='data/', **kwargs):
-    """ Loads a pickled object from a local file..
+    """ Loads a pickled object from a local file.
 
     :param folder:
     :param filename: the name of the pickle file to load from, including extension
@@ -171,7 +173,7 @@ async def cold_boot(client, **kwargs):
               'parsed_msgs': parsed_msgs,
               }
     # Save the messages to a file.
-    helpers.write_pickle_results(parsed_msgs['messages'], 'cold_boot_count_history.pk', **kwargs)
+    write_pickle_results(parsed_msgs['messages'], 'cold_boot_count_history.pk', **kwargs)
     # helpers.save_channel_msgs_to_json(parsed_msgs['messages'], filename='cold_boot_count_history.json', **kwargs)
     return result
 
