@@ -2,7 +2,7 @@
 import json
 import pickle
 import time
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import Any
 import src.config as cfg
 
@@ -115,7 +115,7 @@ def write_pickle_results(some_results, filename, folder='data/', **kwargs):
             print(f'  Success!  Saved results to: `data/{filename}`')
 
 
-def load_pickle_results(filename, folder='data/', **kwargs):
+def load_pickle_results(filename, folder='../data/', **kwargs):
     """ Loads a pickled object from a local file.
 
     :param folder:
@@ -125,7 +125,7 @@ def load_pickle_results(filename, folder='data/', **kwargs):
     """
     verbose = kwargs.get('verbose')
     if verbose:
-        print(f'Loading results from: `data/{filename}`')
+        print(f'Loading results from: `{folder}{filename}`')
     with open(folder + filename, 'rb') as fh:
         result = pickle.load(fh)
         if verbose:
@@ -153,6 +153,12 @@ async def get_count_history(count_channel, search_after, **kwargs):
     return all_messages
 
 
+def get_timestamp_string():
+    now = datetime.now()
+    formatted_timestamp = now.strftime('%Y-%m-%d__%H-%M-%S')
+    return formatted_timestamp
+
+
 async def cold_boot(client, **kwargs):
     """ Connects to a guild and counting channel, collects the message history and saves it.
 
@@ -163,7 +169,9 @@ async def cold_boot(client, **kwargs):
     count_channel = await get_count_channel(count_guild, cfg.COUNT_CHAN_ID, **kwargs)
     search_after = get_msg_datetime(count_channel, cfg.SEARCH_AFTER_MSG_ID)
 
+    print(f'Fetching count history...')
     messages = await get_count_history(count_channel, search_after, **kwargs)
+    print(f' Fetched count history successfully! Parsing results...')
     parsed_msgs = parse_channel_messages(messages, **kwargs)
 
     result = {'count_guild': count_guild,
@@ -172,8 +180,14 @@ async def cold_boot(client, **kwargs):
               'messages': messages,
               'parsed_msgs': parsed_msgs,
               }
+
     # Save the messages to a file.
-    write_pickle_results(parsed_msgs['messages'], 'cold_boot_count_history.pk', **kwargs)
+    f_name = f'cold_boot_count_history--{get_timestamp_string()}'
+    print(f'Writing parsed results to file: "{f_name}"')
+    # print(f' Saving channel messages to `{f_name}.json`')
+    # save_channel_msgs_to_json(channel_msgs=messages, filename=f'{f_name}.json', verbose=True)
+    write_pickle_results(parsed_msgs['messages'], filename=f'{f_name}.pk', **kwargs)
+    print(f' Pickled results to disk.')
     # helpers.save_channel_msgs_to_json(parsed_msgs['messages'], filename='cold_boot_count_history.json', **kwargs)
     return result
 
