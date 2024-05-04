@@ -11,6 +11,7 @@ engine = create_engine(DATABASE_URL)
 
 
 class DataBase:
+
     def __init__(self, db_url: str):
         self.engine = create_engine(db_url)
         self.metadata = MetaData()
@@ -56,13 +57,12 @@ class DataBase:
         return self.Session()
 
 
-# Define the table
-metadata = MetaData()
-history_table = Table(
-    'history',
-    metadata,
-    Column('id', Integer, primary_key=True),
-    Column('user_id', Integer),
-    Column('message', String),
-    Column('timestamp', DateTime(timezone=True), server_default=func.now())
-)
+class History(DataBase):
+    __table__ = Table(
+        'history',
+        MetaData(),
+        Column('id', Integer, primary_key=True),
+        Column('user_id', Integer),
+        Column('message', String),
+        Column('timestamp', DateTime(timezone=True), server_default=func.now())
+    )
