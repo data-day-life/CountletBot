@@ -1,0 +1,13 @@
+postgres:
+  image: postgres:latest
+  environment:
+    POSTGRES_USER: ${DB_USER}
+    POSTGRES_PASSWORD: ${DB_PASSWORD}
+    POSTGRES_DB: countlet_bot
+  ports:
+    - "5432:5432"
+  networks:
+    - app-network
+
+networks:
+app-network:

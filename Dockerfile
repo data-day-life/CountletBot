@@ -1,3 +1,6 @@
+# Use the Confluent Kafka image
+FROM confluentinc/cp-kafka:latest
+
 FROM ubuntu:latest
 LABEL authors="data_day_life"
 
