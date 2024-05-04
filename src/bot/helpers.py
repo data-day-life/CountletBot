@@ -247,3 +247,10 @@ async def cold_boot(client, **kwargs):
     save_channel_msgs_to_json(channel_msgs=parsed_msgs, filename=f'{f_name}.json', **kwargs)
     write_pickle_results(parsed_msgs, filename=f'{f_name}.pk', **kwargs)
     return parsed_msgs
+
+
+def main(**kwargs):
+    pass
+
+if __name__ == '__main__':
+    main()
