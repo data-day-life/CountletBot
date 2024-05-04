@@ -11,27 +11,22 @@ from bot.helpers import get_msg_datetime, parse_channel_messages, \
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
-
-
+client.run(cfg.CLIENT_TOKEN)
 
 
 @client.event
-async def on_ready():
+async def on_ready(**kwargs):
     # Now that the bot is connected, do something
-    # count_guild = await helpers.get_count_guild(client, cfg.GUILD_ID)
-    # count_channel = await helpers.get_count_channel(count_guild, cfg.COUNT_CHAN_ID)
-    #
-    # search_after = helpers.get_msg_datetime(count_channel, cfg.SEARCH_AFTER_MSG_ID)
-    # messages = await helpers.get_count_history(count_channel, search_after, verbose=True)
-    # count_history = helpers.parse_channel_messages(messages, **kwargs)
-    # f_name = 'count_history'
-    # helpers.write_pickle_results(count_history, filename=f_name, verbose=True)
+    count_guild = await get_count_guild(client, cfg.GUILD_ID)
+    count_channel = await get_count_channel(count_guild, cfg.COUNT_CHAN_ID)
 
-    await cold_boot(client)
+    search_after = get_msg_datetime(count_channel, cfg.SEARCH_AFTER_MSG_ID)
+    messages = await get_count_history(count_channel, search_after, verbose=True)
+    count_history = parse_channel_messages(messages, **kwargs)
+    f_name = 'count_history'
+    helpers.write_pickle_results(count_history, filename=f_name, verbose=True)
+
     pass
-
-
-client.run(cfg.CLIENT_TOKEN)
 
 
 async def cold_boot(discord_client, **kwargs):
