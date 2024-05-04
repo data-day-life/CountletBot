@@ -9,6 +9,53 @@ from sqlalchemy.orm import sessionmaker
 DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///:memory:')
 engine = create_engine(DATABASE_URL)
 
+
+class DataBase:
+    def __init__(self, db_url: str):
+        self.engine = create_engine(db_url)
+        self.metadata = MetaData()
+        self.history_table = Table(
+            'history',
+            self.metadata,
+            Column('id', Integer, primary_key=True),
+            Column('user_id', Integer),
+            Column('message', String),
+            Column('timestamp', DateTime(timezone=True), server_default=func.now())
+        )
+        self.Base = declarative_base()
+        self.Base.metadata.create_all(self.engine, checkfirst=True)
+        self.Session = sessionmaker(bind=self.engine)
+        self.session = self.Session()
+
+    def create_entry(self, user_id: int, message: str):
+        new_entry = History(user_id=user_id, message=message)
+        self.session.add(new_entry)
+        self.session.commit()
+
+    def read_entries(self):
+        entries = self.session.query(History).all()
+        for entry in entries:
+            print(f"ID: {entry.id}, User ID: {entry.user_id}, Message: {entry.message}, Timestamp: {entry.timestamp}")
+
+    def update_entry(self, user_id: int, new_message: str):
+        entry_to_update = self.session.query(History).filter_by(user_id=user_id).first()
+        if entry_to_update:
+            entry_to_update.message = new_message
+            self.session.commit()
+
+    def destroy_entry(self, user_id: int):
+        entry_to_delete = self.session.query(History).filter_by(user_id=user_id).first()
+        if entry_to_delete:
+            self.session.delete(entry_to_delete)
+            self.session.commit()
+
+    def close(self):
+        self.session.close()
+
+    def create_db_session(self):
+        return self.Session()
+
+
 # Define the table
 metadata = MetaData()
 history_table = Table(
@@ -19,39 +66,3 @@ history_table = Table(
     Column('message', String),
     Column('timestamp', DateTime(timezone=True), server_default=func.now())
 )
-
-# Create a declarative base
-Base = declarative_base()
-
-# Define a model class for the 'history' table
-class History(Base):
-    __table__ = history_table
-
-# Create the table if it doesn't exist
-Base.metadata.create_all(engine, checkfirst=True)
-
-# Create, read, update, and destroy entries in the database using SQLAlchemy ORM
-Session = sessionmaker(bind=engine)
-session = Session()
-
-# Example of creating an entry
-new_entry = History(user_id=1, message='Hello, world!')
-session.add(new_entry)
-session.commit()
-
-# Example of reading entries
-entries = session.query(History).all()
-for entry in entries:
-    print(f"ID: {entry.id}, User ID: {entry.user_id}, Message: {entry.message}, Timestamp: {entry.timestamp}")
-
-# Example of updating an entry
-entry_to_update = session.query(History).filter_by(user_id=1).first()
-if entry_to_update:
-    entry_to_update.message = 'Updated message'
-    session.commit()
-
-# Example of destroying (deleting) an entry
-entry_to_delete = session.query(History).filter_by(user_id=1).first()
-if entry_to_delete:
-    session.delete(entry_to_delete)
-    session.commit()
