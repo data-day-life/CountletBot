@@ -7,6 +7,7 @@ import discord
 from discord.ext import commands
 from aiohttp import ClientSession
 
+import bot.bot as bot
 import config as cfg
 import helpers
 
@@ -108,7 +109,7 @@ async def main():
                              intents=intents,
                              ) as bot:
             await bot.start(cfg.CLIENT_TOKEN)
-            results = await helpers.cold_boot(our_client, verbose=True)
+            results = await bot.cold_boot(our_client, verbose=True)
 
 
 # For most use cases, after defining what needs to run, we can just tell asyncio to run it:
