@@ -22,6 +22,6 @@ COPY src/ .
 
 COPY requirements.txt .
 RUN python -m pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
 CMD ["python", "app.py"]

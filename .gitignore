@@ -1,4 +1,4 @@
 .idea/**
-/src/config.py
+/src/.env
 /Pipfile.lock
 /data/

@@ -11,3 +11,5 @@ multidict==6.0.4
 SQLAlchemy==2.0.23
 typing_extensions==4.8.0
 yarl==1.9.3
+
+python-dotenv~=1.0.1

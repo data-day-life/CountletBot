@@ -1,3 +1,4 @@
+import os
 import asyncio
 import logging
 import logging.handlers
@@ -6,10 +7,6 @@ import asyncpg
 import discord
 from discord.ext import commands
 from aiohttp import ClientSession
-
-import bot.bot as bot
-import config as cfg
-import helpers
 
 
 class CustomBot(commands.Bot):
@@ -51,66 +48,7 @@ class CustomBot(commands.Bot):
         async with self.db_pool.acquire() as connection:
             # Use the connection for executing queries
             await connection.execute('SELECT * FROM my_table')
-
-
-def setup_logging():
-    # 1. logging
-
-    # for this example, we're going to set up a rotating file logger.
-    # for more info on setting up logging,
-    # see https://discordpy.readthedocs.io/en/latest/logging.html and https://docs.python.org/3/howto/logging.html
-
-    logger = logging.getLogger('discord')
-    logger.setLevel(logging.INFO)
-
-    handler = logging.handlers.RotatingFileHandler(
-        filename='discord.log',
-        encoding='utf-8',
-        maxBytes=32 * 1024 * 1024,  # 32 MiB
-        backupCount=5,  # Rotate through 5 files
-    )
-    dt_fmt = '%Y-%m-%d %H:%M:%S'
-    formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', dt_fmt, style='{')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    return logger
-
-
-async def connect_to_database():
-    pool = await asyncpg.create_pool(
-        host='localhost',
-        port=5432,
-        user='your_username',
-        password='your_password',
-        database='your_database',
-    )
-    try:
-        yield pool
-    finally:
-        await pool.close()
-
-
-async def main():
-    # When taking over how the bot process is run, you become responsible for a few additional things.
-    logger = setup_logging()
-
-    # Here we have a web client and a database pool, both of which do cleanup at exit.
-    # We also have our bot, which depends on both of these.
-    async with (ClientSession() as our_client, connect_to_database() as db_pool):
-        # 2. We become responsible for starting the bot.
-        exts = ['general', 'dice']
-        exts = []
-        intents = discord.Intents.default()
-        intents.message_content = True
-        async with CustomBot(commands.when_mentioned,
-                             db_pool=db_pool,
-                             web_client=our_client,
-                             initial_extensions=exts,
-                             intents=intents,
-                             ) as bot:
-            await bot.start(cfg.CLIENT_TOKEN)
-            results = await bot.cold_boot(our_client, verbose=True)
-
-
-# For most use cases, after defining what needs to run, we can just tell asyncio to run it:
-asyncio.run(main())
+        # We can also use the web client to make requests to external services.
+        async with self.web_client.get('https://httpbin.org/get') as resp:
+            # Use resp to get the data from the response
+            pass

@@ -1,13 +1,8 @@
 # /src/db/db.py
-import os
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, MetaData, Table
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
-# Database connection string
-DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///:memory:')
-engine = create_engine(DATABASE_URL)
 
 
 class DataBase:
