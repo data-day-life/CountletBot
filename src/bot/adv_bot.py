@@ -1,7 +1,3 @@
-import os
-import asyncio
-import logging
-import logging.handlers
 from typing import List, Optional
 import asyncpg
 import discord

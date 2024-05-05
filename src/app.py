@@ -10,7 +10,6 @@ from discord.ext import commands
 
 from bot.adv_bot import CustomBot
 
-from bot import helpers
 """
 Create a connection to a sqlite database running in a docker container.  
 Also create a discord client and connect to the appropriate guild and channel to collect count_history.
@@ -51,8 +50,8 @@ async def connect_to_database():
     pool = await asyncpg.create_pool(
         host='localhost',
         port=5432,
-        user='your_username',
-        password='your_password',
+        user=os.environ.get('DB_USER', None),
+        password=os.environ.get('DB_PASSWORD', None),
         database='your_database',
     )
     try:
@@ -61,26 +60,7 @@ async def connect_to_database():
         await pool.close()
 
 
-async def get_db_pool():
-    return await asyncpg.create_pool(DATABASE_URL)
-
-
-def get_discord_client():
-    intents = discord.Intents.default()
-    client = discord.Client(intents=intents)
-    return client
-
-
 async def main(**kwargs):
-    # discord_bot = get_discord_client()
-    # discord_bot.run(CLIENT_TOKEN)
-    #
-    # db_pool = get_db_pool()
-    # db_conn = db_pool.acquire()
-    # db_conn.close()
-    # db_pool.close()
-    # db_pool.terminate()
-    # return
     # When taking over how the bot process is run, you become responsible for a few additional things.
     logger = setup_logging()
 
