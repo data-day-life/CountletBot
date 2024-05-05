@@ -1,30 +1,30 @@
 # /src/bot/bot.py
+import os
 import time
 from datetime import timedelta
 
-import config as cfg
-import src.config as cfg
 import discord
-import helpers
-from bot.helpers import get_msg_datetime, parse_channel_messages, \
+from helpers import get_msg_datetime, parse_channel_messages, \
     get_timestamp_string, save_channel_msgs_to_json, write_pickle_results
+
+from dotenv import load_dotenv
+load_dotenv(verbose=True)
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
-client.run(cfg.CLIENT_TOKEN)
 
 
 @client.event
 async def on_ready(**kwargs):
     # Now that the bot is connected, do something
-    count_guild = await get_count_guild(client, cfg.GUILD_ID)
-    count_channel = await get_count_channel(count_guild, cfg.COUNT_CHAN_ID)
+    count_guild = await get_count_guild(client, os.getenv('GUILD_ID'))
+    count_channel = await get_count_channel(count_guild, os.getenv('COUNT_CHAN_ID'))
 
-    search_after = get_msg_datetime(count_channel, cfg.SEARCH_AFTER_MSG_ID)
-    messages = await get_count_history(count_channel, search_after, verbose=True)
+    search_after = get_msg_datetime(count_channel, int(os.getenv('SEARCH_AFTER_MSG_ID')))
+    messages = await get_count_history(count_channel, search_after, **kwargs)
     count_history = parse_channel_messages(messages, **kwargs)
     f_name = 'count_history'
-    helpers.write_pickle_results(count_history, filename=f_name, verbose=True)
+    # helpers.write_pickle_results(count_history, filename=f_name, **kwargs)
 
     pass
 
@@ -35,16 +35,16 @@ async def cold_boot(discord_client, **kwargs):
     :param discord_client: a discord.Client object
     :return: the collected messages from a discord server's counting channel.
     """
-    count_guild = await get_count_guild(discord_client, cfg.GUILD_ID, **kwargs)
-    count_channel = await get_count_channel(count_guild, cfg.COUNT_CHAN_ID, **kwargs)
-    search_after = get_msg_datetime(count_channel, cfg.SEARCH_AFTER_MSG_ID)
+    count_guild = await get_count_guild(discord_client, os.getenv('GUILD_ID'), **kwargs)
+    count_channel = await get_count_channel(count_guild, os.getenv('COUNT_CHAN_ID'), **kwargs)
+    search_after = get_msg_datetime(count_channel, os.getenv('SEARCH_AFTER_MSG_ID'))
     # Fetch and parse messages.
     messages = await get_count_history(count_channel, search_after, **kwargs)
     parsed_msgs = parse_channel_messages(messages, **kwargs)
     # Save the messages to a file.
     f_name = f'cold_boot_count_history--{get_timestamp_string()}'
-    save_channel_msgs_to_json(channel_msgs=parsed_msgs, filename=f'{f_name}.json', **kwargs)
-    write_pickle_results(parsed_msgs, filename=f'{f_name}.pk', **kwargs)
+    # save_channel_msgs_to_json(channel_msgs=parsed_msgs, filename=f'{f_name}.json', **kwargs)
+    # write_pickle_results(parsed_msgs, filename=f'{f_name}.pk', **kwargs)
     return parsed_msgs
 
 
@@ -119,3 +119,11 @@ async def get_count_history(count_channel, search_after, **kwargs):
         print(f'  Success!  Fetched {len(all_messages)} messages from counting channel.')
         print(f'    took {str(timedelta(seconds=(time.time() - start)))} sec.')
     return all_messages
+
+
+def main():
+    client.run(os.getenv('CLIENT_TOKEN'))
+
+
+if __name__ == '__main__':
+    main()

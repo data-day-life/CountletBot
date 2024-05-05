@@ -12,7 +12,7 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc
 
-FROM python:3.11
+FROM python:3.9
 WORKDIR /discord_bot_app
 COPY src/ .
 

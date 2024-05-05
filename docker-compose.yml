@@ -24,19 +24,17 @@ services:
     depends_on:
       - postgres_db
       - kafka
+    env_file:
+      - .env
     environment:
-      CLIENT_TOKEN: $CLIENT_TOKEN
-      GUILD_ID: 780312283233779713
-      COUNT_CHAN_ID: 1038808890466390066
-      SEARCH_AFTER_MSG_ID: 1053012296370229248
       DATABASE_URL: postgres://$DB_USER:$DB_PASSWORD@postgres:5432/countlet_bot
 
   postgres_db:
     image: postgres:latest
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: countlet_bot
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:

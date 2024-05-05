@@ -5,7 +5,7 @@ import pickle
 from datetime import datetime
 
 
-def get_msg_datetime(count_channel, msg_id):
+def get_msg_datetime(count_channel, msg_id=1053012296370229248):
     """ Gets a UTC datetime object for a given message id.
 
     :param count_channel: a discord.channel object
@@ -14,7 +14,7 @@ def get_msg_datetime(count_channel, msg_id):
     :type msg_id: str or int
     :return: datetime of given msg_id in a discord.Channel instance
     """
-    msg_dt = count_channel.get_partial_message(msg_id).created_at
+    msg_dt = count_channel.get_partial_message(int(msg_id)).created_at
     return msg_dt
 
 

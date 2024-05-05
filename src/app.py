@@ -60,26 +60,31 @@ async def connect_to_database():
         await pool.close()
 
 
+def simple_bot(**kwargs):
+    import bot.bot as bot
+    bot.client.run(os.environ.get('CLIENT_TOKEN'))
+
+
 async def main(**kwargs):
     # When taking over how the bot process is run, you become responsible for a few additional things.
     logger = setup_logging()
 
     # Here we have a web client and a database pool, both of which do cleanup at exit.
     # We also have our bot, which depends on both of these.
-    async with (ClientSession() as our_client, connect_to_database() as db_pool):
-        # 2. We become responsible for starting the bot.
-        exts = ['general', 'dice']
-        exts = []
-        intents = discord.Intents.default()
-        intents.message_content = True
-        async with CustomBot(commands.when_mentioned,
-                             db_pool=db_pool,
-                             web_client=our_client,
-                             initial_extensions=exts,
-                             intents=intents,
-                             ) as bot:
-            await bot.start(CLIENT_TOKEN)
-            # results = await bot.cold_boot(our_client, verbose=True)
+    # async with (ClientSession() as our_client, connect_to_database() as db_pool):
+    #     # 2. We become responsible for starting the bot.
+    #     exts = ['general', 'dice']
+    #     exts = []
+    #     intents = discord.Intents.default()
+    #     intents.message_content = True
+    #     async with CustomBot(commands.when_mentioned,
+    #                          db_pool=db_pool,
+    #                          web_client=our_client,
+    #                          initial_extensions=exts,
+    #                          intents=intents,
+    #                          ) as bot:
+    #         await bot.start(CLIENT_TOKEN)
+    simple_bot()
 
 
 if __name__ == '__main__':

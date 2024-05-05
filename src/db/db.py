@@ -29,6 +29,7 @@ class DataBase:
         self.session.commit()
 
     def read_entries(self):
+        # TODO: do stuff with the entries
         entries = self.session.query(History).all()
         for entry in entries:
             print(f"ID: {entry.id}, User ID: {entry.user_id}, Message: {entry.message}, Timestamp: {entry.timestamp}")

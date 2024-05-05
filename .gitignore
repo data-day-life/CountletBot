@@ -1,4 +1,5 @@
 .idea/**
-/src/.env
+/.env
 /Pipfile.lock
 /data/
+/.venv/
