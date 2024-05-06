@@ -8,6 +8,7 @@ from aiohttp import ClientSession
 import discord
 from discord.ext import commands
 
+import bot.bot as bot
 from bot.adv_bot import CustomBot
 
 """
@@ -25,7 +26,6 @@ CLIENT_TOKEN = os.environ.get('CLIENT_TOKEN', None)
 
 def setup_logging():
     # 1. logging
-
     # for this example, we're going to set up a rotating file logger.
     # for more info on setting up logging,
     # see https://discordpy.readthedocs.io/en/latest/logging.html and https://docs.python.org/3/howto/logging.html
@@ -41,11 +41,9 @@ def setup_logging():
     )
     dt_fmt = '%Y-%m-%d %H:%M:%S'
     formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', dt_fmt, style='{')
-
-    # TODO: AttributeError: 'Logger' object has no attribute 'setFormatter'
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    return logger
+    return logger, handler
 
 
 async def connect_to_database():
@@ -62,14 +60,15 @@ async def connect_to_database():
         await pool.close()
 
 
-def simple_bot(logger=None):
-    import bot.bot as bot
-    bot.client.run(os.environ.get('CLIENT_TOKEN'), log_handler=logger)
+def simple_bot():
+    logger, handler = setup_logging()
+    bot.client.run(os.environ.get('CLIENT_TOKEN'), log_handler=handler)
 
 
-async def adv_bot(logger):
+async def adv_bot():
     # Here we have a web client and a database pool, both of which do cleanup at exit.
     # We also have our bot, which depends on both of these.
+    logger, handler = setup_logging()
     async with (ClientSession() as our_client, connect_to_database() as db_pool):
         # 2. We become responsible for starting the bot.
         exts = ['general', 'dice']
@@ -88,9 +87,6 @@ async def adv_bot(logger):
 def main(**kwargs):
     # When taking over how the bot process is run, you become responsible for a few additional things.
     simple_bot()
-
-    logger = setup_logging()
-    simple_bot(logger)
     # adv_bot()
 
 

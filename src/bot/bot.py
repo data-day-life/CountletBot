@@ -24,13 +24,13 @@ async def on_ready(verbose=True):
         )
 
     # Now that the bot is connected, do something
-    # count_guild = await get_count_guild(client, os.getenv('GUILD_ID'))
-    # count_channel = await get_count_channel(count_guild, os.getenv('COUNT_CHAN_ID'))
+    count_guild = await get_count_guild(client, os.getenv('GUILD_ID'))
+    count_channel = await get_count_channel(count_guild, os.getenv('COUNT_CHAN_ID'))
     #
-    # search_after = get_msg_datetime(count_channel, int(os.getenv('SEARCH_AFTER_MSG_ID')))
-    # messages = await get_count_history(count_channel, search_after, **kwargs)
-    # count_history = parse_channel_messages(messages, **kwargs)
-    # f_name = 'count_history'
+    search_after = get_msg_datetime(count_channel, os.getenv('SEARCH_AFTER_MSG_ID'))
+    messages = await get_count_history(count_channel, search_after, verbose=verbose)
+    count_history = parse_channel_messages(messages, verbose=verbose)
+    f_name = 'count_history'
     # helpers.write_pickle_results(count_history, filename=f_name, **kwargs)
 
     pass
@@ -125,6 +125,7 @@ async def get_count_history(count_channel, search_after, **kwargs):
     if verbose:
         print(f'  Success!  Fetched {len(all_messages)} messages from counting channel.')
         print(f'    took {str(timedelta(seconds=(time.time() - start)))} sec.')
+        [print(msg) for msg in all_messages]
     return all_messages
 
 
