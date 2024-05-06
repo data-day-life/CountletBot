@@ -41,6 +41,8 @@ def setup_logging():
     )
     dt_fmt = '%Y-%m-%d %H:%M:%S'
     formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', dt_fmt, style='{')
+
+    # TODO: AttributeError: 'Logger' object has no attribute 'setFormatter'
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     return logger
@@ -60,7 +62,7 @@ async def connect_to_database():
         await pool.close()
 
 
-def simple_bot(logger):
+def simple_bot(logger=None):
     import bot.bot as bot
     bot.client.run(os.environ.get('CLIENT_TOKEN'), log_handler=logger)
 
@@ -85,8 +87,9 @@ async def adv_bot(logger):
 
 def main(**kwargs):
     # When taking over how the bot process is run, you become responsible for a few additional things.
-    logger = setup_logging()
+    simple_bot()
 
+    logger = setup_logging()
     simple_bot(logger)
     # adv_bot()
 
