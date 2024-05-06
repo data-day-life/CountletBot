@@ -3,6 +3,7 @@ import asyncpg
 import discord
 from discord.ext import commands
 from aiohttp import ClientSession
+from bot.bot import cold_boot
 
 
 class CustomBot(commands.Bot):
@@ -43,7 +44,14 @@ class CustomBot(commands.Bot):
         # Use the db_pool for database operations
         async with self.db_pool.acquire() as connection:
             # Use the connection for executing queries
-            await connection.execute('SELECT * FROM my_table')
+            # await connection.execute('SELECT * FROM my_table')
+            # Check or create db and tables for the bot
+            await connection.execute('CREATE TABLE IF NOT EXISTS my_table (id serial PRIMARY KEY, name text)')
+            # Fetch channel_messages using cold_boot() and store them in the db
+            channel_history = await cold_boot(self)
+            # Insert or update channel_history into the db
+            await connection.execute('INSERT INTO my_table (name) VALUES ($1)', channel_history)
+
         # We can also use the web client to make requests to external services.
         async with self.web_client.get('https://httpbin.org/get') as resp:
             # Use resp to get the data from the response

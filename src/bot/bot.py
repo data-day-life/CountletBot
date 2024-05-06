@@ -4,7 +4,7 @@ import time
 from datetime import timedelta
 
 import discord
-from helpers import get_msg_datetime, parse_channel_messages, \
+from bot.helpers import get_msg_datetime, parse_channel_messages, \
     get_timestamp_string, save_channel_msgs_to_json, write_pickle_results
 
 from dotenv import load_dotenv
@@ -15,15 +15,22 @@ client = discord.Client(intents=intents)
 
 
 @client.event
-async def on_ready(**kwargs):
-    # Now that the bot is connected, do something
-    count_guild = await get_count_guild(client, os.getenv('GUILD_ID'))
-    count_channel = await get_count_channel(count_guild, os.getenv('COUNT_CHAN_ID'))
+async def on_ready(verbose=True):
+    guild = discord.utils.get(client.guilds, name='Kaiyacord')
+    if verbose:
+        print(
+            f'{client.user} is connected to the following guild:\n'
+            f'  {guild.name} (id: {guild.id})'
+        )
 
-    search_after = get_msg_datetime(count_channel, int(os.getenv('SEARCH_AFTER_MSG_ID')))
-    messages = await get_count_history(count_channel, search_after, **kwargs)
-    count_history = parse_channel_messages(messages, **kwargs)
-    f_name = 'count_history'
+    # Now that the bot is connected, do something
+    # count_guild = await get_count_guild(client, os.getenv('GUILD_ID'))
+    # count_channel = await get_count_channel(count_guild, os.getenv('COUNT_CHAN_ID'))
+    #
+    # search_after = get_msg_datetime(count_channel, int(os.getenv('SEARCH_AFTER_MSG_ID')))
+    # messages = await get_count_history(count_channel, search_after, **kwargs)
+    # count_history = parse_channel_messages(messages, **kwargs)
+    # f_name = 'count_history'
     # helpers.write_pickle_results(count_history, filename=f_name, **kwargs)
 
     pass

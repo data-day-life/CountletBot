@@ -60,33 +60,37 @@ async def connect_to_database():
         await pool.close()
 
 
-def simple_bot(**kwargs):
+def simple_bot(logger):
     import bot.bot as bot
-    bot.client.run(os.environ.get('CLIENT_TOKEN'))
+    bot.client.run(os.environ.get('CLIENT_TOKEN'), log_handler=logger)
 
 
-async def main(**kwargs):
+async def adv_bot(logger):
+    # Here we have a web client and a database pool, both of which do cleanup at exit.
+    # We also have our bot, which depends on both of these.
+    async with (ClientSession() as our_client, connect_to_database() as db_pool):
+        # 2. We become responsible for starting the bot.
+        exts = ['general', 'dice']
+        exts = []
+        intents = discord.Intents.default()
+        intents.message_content = True
+        async with CustomBot(commands.when_mentioned,
+                             db_pool=db_pool,
+                             web_client=our_client,
+                             initial_extensions=exts,
+                             intents=intents,
+                             ) as bot:
+            await bot.start(CLIENT_TOKEN)
+
+
+def main(**kwargs):
     # When taking over how the bot process is run, you become responsible for a few additional things.
     logger = setup_logging()
 
-    # Here we have a web client and a database pool, both of which do cleanup at exit.
-    # We also have our bot, which depends on both of these.
-    # async with (ClientSession() as our_client, connect_to_database() as db_pool):
-    #     # 2. We become responsible for starting the bot.
-    #     exts = ['general', 'dice']
-    #     exts = []
-    #     intents = discord.Intents.default()
-    #     intents.message_content = True
-    #     async with CustomBot(commands.when_mentioned,
-    #                          db_pool=db_pool,
-    #                          web_client=our_client,
-    #                          initial_extensions=exts,
-    #                          intents=intents,
-    #                          ) as bot:
-    #         await bot.start(CLIENT_TOKEN)
-    simple_bot()
+    simple_bot(logger)
+    # adv_bot()
 
 
 if __name__ == '__main__':
     # For most use cases, after defining what needs to run, we can just tell asyncio to run it:
-    asyncio.run(main())  # This is the entry point for the bot process.
+    main()  # This is the entry point for the bot process.
